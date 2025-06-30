@@ -2,7 +2,7 @@ import express from "express";
 
 import {
   createThread,
-  readMovie,
+  readThread,
   updateThread,
   deleteThread,
 } from "../controllers/threadController";
@@ -16,7 +16,7 @@ threadRouter.post(
   mediumUpload.single("file"),
   createThread
 );
-threadRouter.get("/:id([0-9a-f]{24})", readMovie);
+threadRouter.get("/:id([0-9a-f]{24})", readThread);
 threadRouter.put(
   "/:id([0-9a-f]{24})/edit",
   protector,
