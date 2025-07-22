@@ -11,8 +11,10 @@ declare module "express" {
       [key: string]: any;
     };
     file?: {
+      buffer: any;
+      mimetype: string;
+      originalname: string;
       path: string;
-      [key: string]: any;
     };
   }
 }

@@ -10,11 +10,12 @@
     "db:migrate": "bun run src/db/migrate.ts"
   },
   "dependencies": {
+    "@aws-sdk/client-s3": "^3.844.0",
     "axios": "^1.9.0",
     "bcrypt": "^6.0.0",
     "connect-pg-simple": "^10.0.0",
     "dotenv": "^16.6.0",
-    "drizzle-orm": "^0.44.2",
+    "drizzle-orm": "^0.44.3",
     "express": "^4",
     "express-session": "^1.18.1",
     "morgan": "^1.10.0",
@@ -22,7 +23,8 @@
     "pg": "^8.16.3",
     "postgres": "^3.4.7",
     "swagger-jsdoc": "^6.2.8",
-    "swagger-ui-express": "^5.0.1"
+    "swagger-ui-express": "^5.0.1",
+    "uuid": "^11.1.0"
   },
   "devDependencies": {
     "@types/bcrypt": "^5.0.2",

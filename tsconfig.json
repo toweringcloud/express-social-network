@@ -14,7 +14,7 @@
     "allowSyntheticDefaultImports": true,
     "forceConsistentCasingInFileNames": true,
     "allowJs": true,
-    "types": ["bun-types"],
+    // "types": ["bun-types"],
     "outDir": "./dist",
     "rootDir": "./src",
     "esModuleInterop": true

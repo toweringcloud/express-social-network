@@ -1,8 +1,9 @@
 import type { Request, Response } from "express";
 import { desc, eq, ilike } from "drizzle-orm";
 
-import { db } from "../db";
-import { threads } from "../db/schema";
+import { db } from "../models";
+import { threads } from "../models/schema";
+import { getFileUrl, removeFile } from "../utils/storage";
 
 // queries (read-list/search/watch)
 export const listThread = async (req: Request, res: Response) => {
@@ -13,8 +14,8 @@ export const listThread = async (req: Request, res: Response) => {
       .orderBy(desc(threads.createdAt));
 
     // optional case
-    // const allThreads = await db.query.threads.findMany({
-    //   orderBy: [desc(threads.createdAt)], // orderBy는 배열로 여러 조건을 받을 수 있습니다.
+    // const allThreads = await db.query.Thread.findMany({
+    //   orderBy: [desc(Thread.createdAt)], // orderBy는 배열로 여러 조건을 받을 수 있습니다.
     //   with: {
     //     owner: {
     //       columns: {
@@ -45,11 +46,11 @@ export const searchThread = async (req: Request, res: Response) => {
     const foundThreads = await db
       .select()
       .from(threads)
-      .where(ilike(threads.title, `%${keyword}%`));
+      .where(ilike(threads.content, `%${keyword}%`));
 
     // optional case
     // foundThreads = await db.query.threads.findMany({
-    //   where: ilike(threads.title, `%${keyword}%`),
+    //   where: ilike(threads.content, `%${keyword}%`),
     //   with: {
     //     owner: {
     //       columns: {
@@ -77,7 +78,7 @@ export const readThread = async (req: Request, res: Response) => {
 
   const foundThread = await db.query.threads.findFirst({
     where: eq(threads.id, threadId),
-    with: { owner: true },
+    with: { user: true },
   });
   if (!foundThread) {
     return res.status(404).json({ message: `Thread(${id}) not found.` });
@@ -99,15 +100,20 @@ export const createThread = async (req: Request, res: Response) => {
   if (!title || !content) {
     return res.status(400).json({ message: `Title and content are required.` });
   }
+  if (!file) {
+    return res.status(400).send("No file to upload.");
+  }
+
+  // add image or video file into storage
+  const fileUrl = await getFileUrl(file, "image");
 
   try {
     const [newThread] = await db
       .insert(threads)
       .values({
-        title,
         content,
-        fileUrl: file ? file.path : undefined,
-        ownerId: user.id,
+        fileUrl,
+        userId: user.id,
       })
       .returning();
     console.log(newThread);
@@ -140,7 +146,7 @@ export const createThread = async (req: Request, res: Response) => {
 export const updateThread = async (req: Request, res: Response) => {
   const {
     params: { id },
-    body: { title, content },
+    body: { content },
     session: { user },
     file,
   } = req;
@@ -153,16 +159,21 @@ export const updateThread = async (req: Request, res: Response) => {
   if (!foundThread) {
     return res.status(404).json({ message: `thread(${threadId}) not found.` });
   }
-  if (String(foundThread.ownerId) !== String(user.id)) {
+  if (String(foundThread.userId) !== String(user.id)) {
     return res.status(403).redirect("/");
   }
 
-  await db.update(threads).set({
-    title,
-    content,
-    fileUrl: file ? file.path : undefined,
-    updatedAt: new Date(),
-  });
+  // add image or video file into storage
+  const fileUrl = file && (await getFileUrl(file, "image"));
+
+  await db
+    .update(threads)
+    .set({
+      content,
+      fileUrl,
+      updatedAt: new Date(),
+    })
+    .where(eq(threads.id, threadId));
 
   return res.status(200).json({ message: `new thread(${threadId}) modified.` });
 };
@@ -179,11 +190,16 @@ export const deleteThread = async (req: Request, res: Response) => {
   if (!foundThread) {
     return res.status(404).json({ message: `thread(${threadId}) not found.` });
   }
-  if (String(foundThread.ownerId) !== String(user.id)) {
+  if (String(foundThread.userId) !== String(user.id)) {
     return res.status(403).redirect("/");
   }
 
-  await db.delete(threads).where(eq(threads.id, threadId));
+  // remove photo file from storage
+  if (foundThread.fileUrl && process.env.MODE === "OPS") {
+    const fileName = foundThread.fileUrl.split("/").pop();
+    await removeFile(fileName!, "image");
+  }
 
-  return res.status(200).json({ message: `new thread(${threadId}) removed.` });
+  await db.delete(threads).where(eq(threads.id, threadId));
+  return res.status(204).end();
 };

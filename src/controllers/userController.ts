@@ -2,8 +2,9 @@ import type { Request, Response } from "express";
 import { eq, or } from "drizzle-orm";
 import bcrypt from "bcrypt";
 
-import { db } from "../db";
-import { users } from "../db/schema";
+import { db } from "../models";
+import { users } from "../models/schema";
+import { getFileUrl } from "../utils/storage";
 
 export const signup = async (req: Request, res: Response) => {
   const { username, email, password, password2 } = req.body;
@@ -128,7 +129,7 @@ export const updateProfile = async (req: Request, res: Response) => {
     session: {
       user: { id, avatarUrl },
     },
-    body: { email, username, nickname, location },
+    body: { email, nickname },
     file,
   } = req;
 
@@ -142,15 +143,14 @@ export const updateProfile = async (req: Request, res: Response) => {
       message: "An account with this username does not exist.",
     });
   }
+  const fileUrl = file && (await getFileUrl(file, "image"));
 
   const [updatedUser] = await db
     .update(users)
     .set({
       email,
-      username,
       nickname,
-      location,
-      avatarUrl: file ? file.path : avatarUrl,
+      avatarUrl: fileUrl || avatarUrl,
     })
     .where(eq(users.id, userId))
     .returning();

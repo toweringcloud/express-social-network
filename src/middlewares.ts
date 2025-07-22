@@ -28,12 +28,13 @@ export const publicOnly = (req: Request, res: Response, next: NextFunction) => {
   }
 };
 
-export const avatarUpload = multer({
-  dest: "files/avatars/",
-  limits: { fileSize: 1000000 },
-});
-
-export const mediumUpload = multer({
-  dest: "files/media/",
-  limits: { fileSize: 10000000 },
-});
+export const fileUpload = (path: string, size: number) =>
+  process.env.MODE === "OPS"
+    ? multer({
+        storage: multer.memoryStorage(),
+        limits: { fileSize: size * 1024 * 1024 },
+      })
+    : multer({
+        dest: `files/${path}/`,
+        limits: { fileSize: size * 1024 * 1024 },
+      });

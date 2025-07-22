@@ -6,7 +6,7 @@ import {
   updateProfile,
   changePassword,
 } from "../controllers/userController";
-import { avatarUpload, protector, publicOnly } from "../middlewares";
+import { fileUpload, protector, publicOnly } from "../middlewares";
 
 const userRouter = express.Router();
 
@@ -16,7 +16,7 @@ userRouter.get("/:id", readProfile);
 userRouter.post(
   "/edit",
   protector,
-  avatarUpload.single("avatar"),
+  fileUpload("avatars", 5).single("avatar"),
   updateProfile
 );
 userRouter.post("/change-pw", protector, changePassword);

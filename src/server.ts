@@ -9,7 +9,7 @@ import threadRouter from "./routers/threadRouter";
 import userRouter from "./routers/userRouter";
 import { localsMiddleware } from "./middlewares";
 import { specs } from "./utils/swagger";
-import { pool } from "./db";
+import { pool } from "./models";
 
 const app = express();
 const PGStore = connectPgSimple(session);

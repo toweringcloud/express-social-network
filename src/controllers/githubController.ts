@@ -2,8 +2,8 @@ import type { Request, Response } from "express";
 import { eq } from "drizzle-orm";
 import axios from "axios";
 
-import { db } from "../db";
-import { users } from "../db/schema";
+import { db } from "../models";
+import { users } from "../models/schema";
 
 export const githubLogin = (req: Request, res: Response) => {
   const baseUrl = `${process.env.GITHUB_AUTH_URL}/authorize`;

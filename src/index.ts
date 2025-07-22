@@ -1,6 +1,6 @@
 import "dotenv/config";
-import "./db";
-import "./db/schema";
+import "./models";
+import "./models/schema";
 import app from "./server";
 
 const PORT = process.env.API_PORT_NO;
