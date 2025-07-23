@@ -90,4 +90,4 @@ export const comments = pgTable("comments", {
     .references(() => users.id, { onDelete: "cascade" }),
 });
 export type Comment = typeof comments.$inferSelect;
-export type NewComments = typeof comments.$inferInsert;
+export type NewComment = typeof comments.$inferInsert;

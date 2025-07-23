@@ -60,16 +60,16 @@ threadRouter.post(
  *        name: id
  *        required: true
  *        schema:
- *          type: string
- *          pattern: '^[0-9a-f]{24}$'
- *        description: 조회할 게시글의 ID (MongoDB ObjectId)
+ *          type: number
+ *          pattern: '^[0-9]*$'
+ *        description: 조회할 게시글의 ID
  *    responses:
  *      '200':
  *        description: 성공적으로 게시글 정보를 반환함.
  *      '404':
  *        description: 해당 ID의 게시글을 찾을 수 없음.
  */
-threadRouter.get("/:id([0-9a-f]{24})", readThread);
+threadRouter.get("/:id([0-9]*)", readThread);
 
 /**
  * @swagger
@@ -85,8 +85,8 @@ threadRouter.get("/:id([0-9a-f]{24})", readThread);
  *        name: id
  *        required: true
  *        schema:
- *          type: string
- *          pattern: '^[0-9a-f]{24}$'
+ *          type: number
+ *          pattern: '^[0-9]*$'
  *        description: 수정할 게시글의 ID
  *    requestBody:
  *      content:
@@ -110,7 +110,7 @@ threadRouter.get("/:id([0-9a-f]{24})", readThread);
  *        description: 해당 ID의 게시글을 찾을 수 없음.
  */
 threadRouter.put(
-  "/:id([0-9a-f]{24})/edit",
+  "/:id([0-9]*)/edit",
   protector,
   fileUpload("photos", 5).single("photo"),
   updateThread
@@ -130,8 +130,8 @@ threadRouter.put(
  *        name: id
  *        required: true
  *        schema:
- *          type: string
- *          pattern: '^[0-9a-f]{24}$'
+ *          type: number
+ *          pattern: '^[0-9]*$'
  *        description: 삭제할 게시글의 ID
  *    responses:
  *      '200':
@@ -143,6 +143,6 @@ threadRouter.put(
  *      '404':
  *        description: 해당 ID의 게시글을 찾을 수 없음.
  */
-threadRouter.delete("/:id([0-9a-f]{24})/delete", protector, deleteThread);
+threadRouter.delete("/:id([0-9]*)/delete", protector, deleteThread);
 
 export default threadRouter;

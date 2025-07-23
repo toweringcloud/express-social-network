@@ -36,7 +36,7 @@ GITHUB_AUTH_URL=https://github.com/login/oauth
 GITHUB_CALLBACK_URL=http://localhost:3000/github/callback
 GITHUB_CLIENT_ID={YOUR_GITHUB_CLIENT_ID}
 GITHUB_CLIENT_SECRET={YOUR_GITHUB_CLIENT_SECRET}
-DATABASE_URL=postgres://id:pw@localhost:5432/thread
+DATABASE_URL=postgres://id:pw@localhost:5432/db
 STORAGE_SERVER="minio | cloudflare r2 | aws s3"
 STORAGE_REGION=auto
 STORAGE_ENDPOINT_URL={YOUR_ENDPOINT_URL}
@@ -53,14 +53,14 @@ STORAGE_DOWNLOAD_URL={YOUR_PUBLIC_DOMAIN}
 $ bun run db:generate
 $ drizzle-kit generate
 No config path provided, using default 'drizzle.config.ts'
-Reading config file 'D:\work\pilots\express-social-network\drizzle.config.ts'
+Reading config file '...\drizzle.config.ts'
 4 tables
 comments 6 columns 0 indexes 2 fks
 likes 3 columns 0 indexes 2 fks
 threads 8 columns 0 indexes 1 fks
 users 9 columns 0 indexes 0 fks
 
-[✓] Your SQL migration file ➜ src\models\migrations\0000_clammy_luke_cage.sql 🚀
+[✓] Your SQL migration file ➜ 0000_clammy_luke_cage.sql 🚀
 ```
 
 - apply db schema into database server

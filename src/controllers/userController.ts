@@ -23,7 +23,7 @@ export const signup = async (req: Request, res: Response) => {
       .limit(1);
 
     if (existingUser.length > 0) {
-      return res.status(400).json({
+      return res.status(409).json({
         message: "😖 This username/email is already taken.",
       });
     }
@@ -34,6 +34,7 @@ export const signup = async (req: Request, res: Response) => {
       email,
       password: hashedPassword,
     });
+    console.log(`new user(${username}) added.`);
 
     return res
       .status(201)
@@ -68,7 +69,7 @@ export const signin = async (req: Request, res: Response) => {
     .where(eq(users.username, username));
 
   if (foundUsers.length === 0) {
-    return res.status(400).json({
+    return res.status(404).json({
       message: "An account with this username does not exist.",
     });
   }
@@ -98,15 +99,13 @@ export const signout = (req: Request, res: Response) => {
 
 export const readProfile = async (req: Request, res: Response) => {
   const { id } = req.params;
-  const userId = parseInt(id, 10);
-
-  if (isNaN(userId)) {
-    return res.status(400).json({ message: "Invalid User ID." });
+  if (!id) {
+    return res.status(400).json({ message: "username required." });
   }
 
   try {
     const foundUser = await db.query.users.findFirst({
-      where: eq(users.id, userId),
+      where: eq(users.username, id),
       with: { threads: true },
     });
     if (!foundUser) {
@@ -129,7 +128,7 @@ export const updateProfile = async (req: Request, res: Response) => {
     session: {
       user: { id, avatarUrl },
     },
-    body: { email, nickname },
+    body: { nickname },
     file,
   } = req;
 
@@ -148,7 +147,6 @@ export const updateProfile = async (req: Request, res: Response) => {
   const [updatedUser] = await db
     .update(users)
     .set({
-      email,
       nickname,
       avatarUrl: fileUrl || avatarUrl,
     })
@@ -165,7 +163,7 @@ export const updateProfile = async (req: Request, res: Response) => {
 export const changePassword = async (req: Request, res: Response) => {
   const {
     session: { user },
-    body: { oldPassword, newPassword, newPassword2 },
+    body: { currentPassword, newPassword, newPassword2 },
   } = req;
 
   const userId = parseInt(user.id, 10);
@@ -179,7 +177,7 @@ export const changePassword = async (req: Request, res: Response) => {
     });
   }
 
-  const ok = await bcrypt.compare(oldPassword, foundUser.password!);
+  const ok = await bcrypt.compare(currentPassword, foundUser.password!);
   if (!ok) {
     return res.status(400).json({
       message: "😖 The current password is incorrect",

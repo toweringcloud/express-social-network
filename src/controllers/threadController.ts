@@ -92,20 +92,17 @@ export const readThread = async (req: Request, res: Response) => {
 // mutations (create, update, delete)
 export const createThread = async (req: Request, res: Response) => {
   const {
-    body: { title, content },
+    body: { content },
     session: { user },
     file,
   } = req;
 
-  if (!title || !content) {
-    return res.status(400).json({ message: `Title and content are required.` });
-  }
-  if (!file) {
-    return res.status(400).send("No file to upload.");
+  if (!content) {
+    return res.status(400).json({ message: `Content are required.` });
   }
 
-  // add image or video file into storage
-  const fileUrl = await getFileUrl(file, "image");
+  // add photo file into storage
+  const fileUrl = file && (await getFileUrl(file, "image"));
 
   try {
     const [newThread] = await db
@@ -163,7 +160,7 @@ export const updateThread = async (req: Request, res: Response) => {
     return res.status(403).redirect("/");
   }
 
-  // add image or video file into storage
+  // add photo file into storage
   const fileUrl = file && (await getFileUrl(file, "image"));
 
   await db

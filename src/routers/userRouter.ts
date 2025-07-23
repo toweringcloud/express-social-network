@@ -33,7 +33,7 @@ const userRouter = express.Router();
  *              type: object
  *              properties:
  *                id:
- *                  type: string
+ *                  type: number
  *                username:
  *                  type: string
  *                email:
@@ -62,6 +62,8 @@ userRouter.get("/:id", readProfile);
  *              currentPassword:
  *                type: string
  *              newPassword:
+ *                type: string
+ *              newPassword2:
  *                type: string
  *    responses:
  *      '200':
@@ -92,7 +94,7 @@ userRouter.post("/change-pw", protector, changePassword);
  *              avatar:
  *                type: string
  *                format: binary
- *              username:
+ *              nickname:
  *                type: string
  *    responses:
  *      200:

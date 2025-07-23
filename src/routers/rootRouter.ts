@@ -73,7 +73,10 @@ rootRouter.get("/search", searchThread);
  *                type: string
  *              email:
  *                type: string
+ *                format: email
  *              password:
+ *                type: string
+ *              password2:
  *                type: string
  *    responses:
  *      '201':
@@ -90,7 +93,7 @@ rootRouter.post("/join", publicOnly, signup);
  * /login:
  *  post:
  *    summary: 로그인
- *    description: 이메일과 비밀번호로 로그인하고 인증 토큰을 발급받습니다.
+ *    description: 아이디와 비밀번호로 로그인하고 인증 토큰을 발급받습니다.
  *    tags: [Users]
  *    requestBody:
  *      required: true
@@ -99,7 +102,7 @@ rootRouter.post("/join", publicOnly, signup);
  *          schema:
  *            type: object
  *            properties:
- *              email:
+ *              username:
  *                type: string
  *              password:
  *                type: string

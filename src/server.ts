@@ -18,6 +18,7 @@ const PGStore = connectPgSimple(session);
 const logger = morgan("dev");
 app.use(logger);
 app.use(express.urlencoded({ extended: true }));
+app.use(express.json());
 
 // Swagger UI
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(specs));
