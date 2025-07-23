@@ -18,7 +18,7 @@ export const githubLogin = (req: Request, res: Response) => {
 };
 
 export const githubCallback = async (req: Request, res: Response) => {
-  const baseUrl = `${process.env.GH_AUTH_URL}/access_token`;
+  const baseUrl = `${process.env.GITHUB_AUTH_URL}/access_token`;
   const configObj: Record<string, string> = {
     client_id: process.env.GITHUB_CLIENT_ID!,
     client_secret: process.env.GITHUB_CLIENT_SECRET!,
@@ -68,7 +68,6 @@ export const githubCallback = async (req: Request, res: Response) => {
         username: userData.login,
         email: emailObj.email,
         nickname: userData.name,
-        location: userData.location,
         avatarUrl: userData.avatar_url,
       });
     }

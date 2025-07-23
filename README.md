@@ -25,29 +25,52 @@ $ bun init
 $ bun i
 ```
 
-- create runtime variables
+- define runtime variables
 
 ```sh
 $ cat .env
 MODE=DEV
-API_SERVER_URL=http://localhost
-API_PORT_NO=4000
 COOKIE_SECRET={YOUR_COOKIE_SECRET}
 GITHUB_API_URL=https://api.github.com
 GITHUB_AUTH_URL=https://github.com/login/oauth
+GITHUB_CALLBACK_URL=http://localhost:3000/github/callback
 GITHUB_CLIENT_ID={YOUR_GITHUB_CLIENT_ID}
 GITHUB_CLIENT_SECRET={YOUR_GITHUB_CLIENT_SECRET}
-DATABASE_URL=postgres://id:pw@localhost:5432/db
+DATABASE_URL=postgres://id:pw@localhost:5432/thread
 STORAGE_SERVER="minio | cloudflare r2 | aws s3"
 STORAGE_REGION=auto
 STORAGE_ENDPOINT_URL={YOUR_ENDPOINT_URL}
 STORAGE_ACCESS_KEY_ID={YOUR_ACCESS_KEY_ID}
 STORAGE_SECRET_ACCESS_KEY={YOUR_SECRET_ACCESS_KEY}
-STORAGE_DOWNLOAD_URL_VIDEO={YOUR_PUBLIC_VIDEO_DOMAIN}
-STORAGE_DOWNLOAD_URL_IMAGE={YOUR_PUBLIC_IMAGE_DOMAIN}
+STORAGE_DOWNLOAD_URL={YOUR_PUBLIC_DOMAIN}
 ```
 
 ### launch
+
+- create db schema with drizzle-kit
+
+```sh
+$ bun run db:generate
+$ drizzle-kit generate
+No config path provided, using default 'drizzle.config.ts'
+Reading config file 'D:\work\pilots\express-social-network\drizzle.config.ts'
+4 tables
+comments 6 columns 0 indexes 2 fks
+likes 3 columns 0 indexes 2 fks
+threads 8 columns 0 indexes 1 fks
+users 9 columns 0 indexes 0 fks
+
+[✓] Your SQL migration file ➜ src\models\migrations\0000_clammy_luke_cage.sql 🚀
+```
+
+- apply db schema into database server
+
+```sh
+$ bun run db:migrate
+$ bun run src/models/migrate.ts
+Running migrations...
+Migrations completed!
+```
 
 - run bun app with development mode
 

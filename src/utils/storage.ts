@@ -62,11 +62,7 @@ export const getFileUrl = async (file: FileMeta, bucketName: string) => {
 
   // set public download url to uploaded file
   // set signed URL if using a private bucket
-  const fileUrl = `${
-    bucketName === "video"
-      ? process.env.STORAGE_DOWNLOAD_URL_VIDEO
-      : process.env.STORAGE_DOWNLOAD_URL_IMAGE
-  }/${fileName}`;
+  const fileUrl = `${process.env.STORAGE_DOWNLOAD_URL}/${fileName}`;
   return fileUrl;
 };
 

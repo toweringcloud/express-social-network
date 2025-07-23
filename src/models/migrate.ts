@@ -9,7 +9,7 @@ async function runMigrations() {
   const migrationClient = postgres(process.env.DATABASE_URL!, { max: 1 });
   const db = drizzle(migrationClient);
 
-  await migrate(db, { migrationsFolder: "./src/db/migrations" });
+  await migrate(db, { migrationsFolder: "./src/models/migrations" });
 
   await migrationClient.end();
   console.log("Migrations completed!");

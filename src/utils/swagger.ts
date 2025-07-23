@@ -1,20 +1,35 @@
 import swaggerJsdoc from "swagger-jsdoc";
+import path from "path";
 
 const options: swaggerJsdoc.Options = {
   definition: {
     openapi: "3.0.0",
     info: {
-      title: "Bun Express Drizzle API",
+      title: "Social Network API",
       version: "1.0.0",
-      description: "A simple Express API with Bun, Drizzle, and Swagger",
+      description: "A restful API on social networking service (for User)",
     },
     servers: [
       {
-        url: "http://localhost:4000",
+        url: "http://localhost:3000",
+      },
+    ],
+    components: {
+      securitySchemes: {
+        bearerAuth: {
+          type: "http",
+          scheme: "bearer",
+          bearerFormat: "JWT",
+        },
+      },
+    },
+    security: [
+      {
+        bearerAuth: [],
       },
     ],
   },
-  apis: ["./src/routes/*.ts"],
+  apis: [path.join(__dirname, "../routers/*.ts")],
 };
 
 export const specs = swaggerJsdoc(options);

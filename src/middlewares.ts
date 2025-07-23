@@ -16,7 +16,7 @@ export const protector = (req: Request, res: Response, next: NextFunction) => {
   if (req.session.loggedIn) {
     return next();
   } else {
-    return res.redirect("/login");
+    return res.sendStatus(401);
   }
 };
 
