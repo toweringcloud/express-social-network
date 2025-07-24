@@ -11,12 +11,12 @@ const rootRouter = express.Router();
  * @swagger
  * /:
  *  get:
- *    summary: 게시글 목록 조회
- *    description: 전체 게시글 목록을 조회합니다.
+ *    summary: 글 차례 보기
+ *    description: 모든 글의 차례를 봅니다.
  *    tags: [Threads]
  *    responses:
  *      '200':
- *        description: 성공적으로 게시글 목록을 반환함.
+ *        description: 성공적으로 글 차례를 반환함.
  *        content:
  *          application/json:
  *            schema:
@@ -38,8 +38,8 @@ rootRouter.get("/", listThread);
  * @swagger
  * /search:
  *  get:
- *    summary: 게시글 검색
- *    description: 키워드를 사용하여 게시글을 검색합니다.
+ *    summary: 글 찾기
+ *    description: 키워드를 사용하여 글을 찾습니다.
  *    tags: [Threads]
  *    parameters:
  *      - in: query
@@ -50,7 +50,7 @@ rootRouter.get("/", listThread);
  *        description: 검색할 키워드
  *    responses:
  *      '200':
- *        description: 검색된 게시글 목록을 반환함.
+ *        description: 검색된 글 목록을 반환함.
  *      '400':
  *        description: 검색 키워드가 제공되지 않음.
  */

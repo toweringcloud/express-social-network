@@ -162,7 +162,7 @@ export const updateThread = async (req: Request, res: Response) => {
       .json({ message: `😖 thread(${threadId}) not found.` });
   }
   if (String(foundThread.userId) !== String(user.id)) {
-    return res.status(403).redirect("/");
+    return res.status(403).end();
   }
 
   // add photo file into storage
@@ -197,7 +197,7 @@ export const deleteThread = async (req: Request, res: Response) => {
       .json({ message: `😖 thread(${threadId}) not found.` });
   }
   if (String(foundThread.userId) !== String(user.id)) {
-    return res.status(403).redirect("/");
+    return res.status(403).end();
   }
 
   // remove photo file from storage
@@ -232,7 +232,7 @@ export const toggleLikeOnThread = async (req: Request, res: Response) => {
   });
   if (foundLike) {
     if (String(foundLike.userId) !== String(user.id)) {
-      return res.status(403).redirect("/");
+      return res.status(403).end();
     }
   }
 
@@ -240,7 +240,7 @@ export const toggleLikeOnThread = async (req: Request, res: Response) => {
     if (!foundLike) {
       if (like === true) {
         await db.insert(likes).values({
-          threadId: threadId,
+          threadId,
           userId: user.id,
         });
         return res.status(201).json({
