@@ -1,8 +1,8 @@
 import type { Request, Response } from "express";
-import { desc, eq, ilike } from "drizzle-orm";
+import { and, desc, eq, ilike } from "drizzle-orm";
 
 import { db } from "../models";
-import { threads } from "../models/schema";
+import { likes, threads } from "../models/schema";
 import { getFileUrl, removeFile } from "../utils/storage";
 
 // queries (read-list/search/watch)
@@ -208,4 +208,79 @@ export const deleteThread = async (req: Request, res: Response) => {
 
   await db.delete(threads).where(eq(threads.id, threadId));
   return res.status(204).end();
+};
+
+export const toggleLikeOnThread = async (req: Request, res: Response) => {
+  const {
+    params: { id },
+    body: { like },
+    session: { user },
+  } = req;
+
+  const threadId = parseInt(id, 10);
+  const foundThread = await db.query.threads.findFirst({
+    where: eq(threads.id, threadId),
+  });
+  if (!foundThread) {
+    return res
+      .status(404)
+      .json({ message: `😖 thread(${threadId}) not found.` });
+  }
+
+  const foundLike = await db.query.likes.findFirst({
+    where: and(eq(likes.threadId, threadId), eq(likes.userId, user.id)),
+  });
+  if (foundLike) {
+    if (String(foundLike.userId) !== String(user.id)) {
+      return res.status(403).redirect("/");
+    }
+  }
+
+  try {
+    if (!foundLike) {
+      if (like === true) {
+        await db.insert(likes).values({
+          threadId: threadId,
+          userId: user.id,
+        });
+        return res.status(201).json({
+          message: `😎 like on thread(${threadId}) added.`,
+        });
+      } else {
+        return res.status(200).json({
+          message: `😖 no like on thread(${threadId}).`,
+        });
+      }
+    } else {
+      if (like === true) {
+        return res.status(200).json({
+          message: `😖 already liked on thread(${threadId}).`,
+        });
+      } else {
+        await db
+          .delete(likes)
+          .where(and(eq(likes.threadId, threadId), eq(likes.userId, user.id)));
+        return res.status(204).end();
+      }
+    }
+  } catch (error: unknown) {
+    console.error("Error adding thread:", error);
+    let errorMessage: string = "Unknown Error";
+
+    if (error instanceof Error) {
+      errorMessage = error.message;
+    } else if (
+      typeof error === "object" &&
+      error !== null &&
+      "_message" in error
+    ) {
+      errorMessage = (error as { _message: string })._message;
+    } else if (typeof error === "string") {
+      errorMessage = error;
+    }
+
+    return res
+      .status(500)
+      .json({ message: "failed to add new thread.", error: errorMessage });
+  }
 };

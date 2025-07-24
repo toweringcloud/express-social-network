@@ -5,6 +5,7 @@ import {
   readThread,
   updateThread,
   deleteThread,
+  toggleLikeOnThread,
 } from "../controllers/threadController";
 import { fileUpload, protector } from "../middlewares";
 
@@ -12,7 +13,7 @@ const threadRouter = express.Router();
 
 /**
  * @swagger
- * /threads/upload:
+ * /threads:
  *  post:
  *    summary: 새 게시글 작성
  *    description: 사진과 내용을 포함한 새로운 게시글을 작성합니다.
@@ -42,7 +43,7 @@ const threadRouter = express.Router();
  *        description: 인증되지 않은 사용자.
  */
 threadRouter.post(
-  "/upload",
+  "/",
   protector,
   fileUpload("photos", 5).single("photo"),
   createThread
@@ -73,7 +74,7 @@ threadRouter.get("/:id([0-9]*)", readThread);
 
 /**
  * @swagger
- * /threads/{id}/edit:
+ * /threads/{id}/modify:
  *  put:
  *    summary: 게시글 수정
  *    description: ID를 사용하여 특정 게시글의 사진이나 내용을 수정합니다.
@@ -110,7 +111,7 @@ threadRouter.get("/:id([0-9]*)", readThread);
  *        description: 해당 ID의 게시글을 찾을 수 없음.
  */
 threadRouter.put(
-  "/:id([0-9]*)/edit",
+  "/:id([0-9]*)/modify",
   protector,
   fileUpload("photos", 5).single("photo"),
   updateThread
@@ -118,7 +119,7 @@ threadRouter.put(
 
 /**
  * @swagger
- * /threads/{id}/delete:
+ * /threads/{id}/remove:
  *  delete:
  *    summary: 게시글 삭제
  *    description: ID를 사용하여 특정 게시글을 삭제합니다.
@@ -143,6 +144,43 @@ threadRouter.put(
  *      '404':
  *        description: 해당 ID의 게시글을 찾을 수 없음.
  */
-threadRouter.delete("/:id([0-9]*)/delete", protector, deleteThread);
+threadRouter.delete("/:id([0-9]*)/remove", protector, deleteThread);
+
+/**
+ * @swagger
+ * /threads/{id}/like:
+ *  post:
+ *    summary: 게시글에 대한 호감도 표시
+ *    description: 게시글에 대한 호감도를 반영하거나 취소합니다.
+ *    tags: [Threads]
+ *    security:
+ *      - bearerAuth: []
+ *    parameters:
+ *      - in: path
+ *        name: id
+ *        required: true
+ *        schema:
+ *          type: number
+ *          pattern: '^[0-9]*$'
+ *        description: 게시글의 ID
+ *    requestBody:
+ *      required: true
+ *      content:
+ *        application/json:
+ *          schema:
+ *            type: object
+ *            properties:
+ *              like:
+ *                type: boolean
+ *                description: 좋아요(true) or 무응답(false)
+ *    responses:
+ *      '201':
+ *        description: 호감도(좋아요)가 반영됨.
+ *      '204':
+ *        description: 호감도(좋아요)가 취소됨.
+ *      '401':
+ *        description: 인증되지 않은 사용자.
+ */
+threadRouter.post("/:id([0-9]*)/like", protector, toggleLikeOnThread);
 
 export default threadRouter;
