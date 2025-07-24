@@ -12,9 +12,8 @@ import { specs } from "./utils/swagger";
 import { pool } from "./models";
 
 const app = express();
-const PGStore = connectPgSimple(session);
 
-// Logger & ...
+// Logger & Options
 const logger = morgan("dev");
 app.use(logger);
 app.use(express.urlencoded({ extended: true }));
@@ -24,6 +23,7 @@ app.use(express.json());
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(specs));
 
 // Session for Cookie
+const PGStore = connectPgSimple(session);
 app.use(
   session({
     secret: process.env.COOKIE_SECRET!,

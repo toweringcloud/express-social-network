@@ -1,5 +1,6 @@
 import express from "express";
 
+import { githubLogin, githubCallback } from "../controllers/githubController";
 import { listThread, searchThread } from "../controllers/threadController";
 import { signup, signin, signout } from "../controllers/userController";
 import { protector, publicOnly } from "../middlewares";
@@ -130,5 +131,31 @@ rootRouter.post("/login", publicOnly, signin);
  *        description: 인증되지 않은 사용자.
  */
 rootRouter.get("/logout", protector, signout);
+
+/**
+ * @swagger
+ * /github:
+ *  get:
+ *    summary: GitHub 로그인 시작
+ *    description: 사용자를 GitHub 인증 페이지로 리디렉션합니다.
+ *    tags: [Users]
+ *    responses:
+ *      302:
+ *        description: GitHub 로그인 페이지로 성공적으로 리디렉션됨.
+ */
+rootRouter.get("/github", publicOnly, githubLogin);
+
+/**
+ * @swagger
+ * /github/callback:
+ *  get:
+ *    summary: GitHub 로그인 콜백
+ *    description: GitHub 인증 후 사용자가 리디렉션되는 경로입니다. 로그인을 처리하고 세션을 생성합니다.
+ *    tags: [Users]
+ *    responses:
+ *      '302':
+ *        description: 로그인 성공 후 메인 페이지로 리디렉션됨.
+ */
+rootRouter.get("/github/callback", publicOnly, githubCallback);
 
 export default rootRouter;

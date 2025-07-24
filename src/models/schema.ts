@@ -12,15 +12,17 @@ import { relations } from "drizzle-orm";
 
 // --- User Model ---
 export const users = pgTable("users", {
-  avatarUrl: text("avatar_url"),
+  avatarUrl: varchar("avatar_url", { length: 128 }),
   createdAt: timestamp("created_at").defaultNow().notNull(),
-  email: varchar("email", { length: 32 }).notNull().unique(),
+  email: varchar("email", { length: 64 }).unique(),
   id: serial("id").primaryKey(),
-  nickname: varchar("nickname", { length: 64 }),
+  nickname: varchar("nickname", { length: 32 }),
   password: text("password"),
   socialOnly: boolean("social_only").default(false).notNull(),
   updatedAt: timestamp("updated_at").defaultNow(),
-  username: varchar("username", { length: 32 }).notNull().unique(),
+  username: varchar("username", { length: 16 }).unique(),
+  verifiedAt: timestamp("verified_at"),
+  withdrawedAt: timestamp("withdrawed_at"),
 });
 export const usersRelations = relations(users, ({ many }) => ({
   // A user can have many threads. The 'threads' table references this user via 'ownerId'.
@@ -33,9 +35,10 @@ export type NewUser = typeof users.$inferInsert;
 export const threads = pgTable("threads", {
   content: text("content").notNull(),
   createdAt: timestamp("created_at").defaultNow().notNull(),
-  fileUrl: text("file_url"),
+  fileUrl: varchar("file_url", { length: 128 }),
   id: serial("id").primaryKey(),
   isActive: boolean("is_active").default(true).notNull(),
+  tags: text("tags"),
   updatedAt: timestamp("updated_at").defaultNow(),
   views: integer("views").default(0).notNull(),
 

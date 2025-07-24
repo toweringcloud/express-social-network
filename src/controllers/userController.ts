@@ -38,7 +38,7 @@ export const signup = async (req: Request, res: Response) => {
 
     return res
       .status(201)
-      .json({ message: `new user(${username}) signed up.` });
+      .json({ message: `😎 new user(${username}) signed up.` });
   } catch (error: unknown) {
     let errorMessage: string = "Unknown Error";
 
@@ -69,38 +69,38 @@ export const signin = async (req: Request, res: Response) => {
     .where(eq(users.username, username));
 
   if (foundUsers.length === 0) {
-    return res.status(404).json({
-      message: "An account with this username does not exist.",
+    return res.status(400).json({
+      message: "😖 Wrong Uasername.",
     });
   }
 
   const foundUser = foundUsers[0];
   if (!foundUser.password) {
     return res.status(400).json({
-      message: "This account is for social login only.",
+      message: "😖 Social login only.",
     });
   }
 
   const ok = await bcrypt.compare(password, foundUser.password);
   if (!ok) {
     return res.status(400).json({
-      message: "Wrong password",
+      message: "😖 Wrong password",
     });
   }
   req.session.loggedIn = true;
   req.session.user = foundUser;
-  return res.status(200).json({ message: `user(${username} signed in.` });
+  return res.status(200).json({ message: `😎 user(${username} signed in.` });
 };
 
 export const signout = (req: Request, res: Response) => {
   req.session.destroy();
-  return res.redirect("/");
+  return res.sendStatus(204);
 };
 
 export const readProfile = async (req: Request, res: Response) => {
   const { id } = req.params;
   if (!id) {
-    return res.status(400).json({ message: "username required." });
+    return res.status(400).json({ message: "😖 username required." });
   }
 
   try {
@@ -109,11 +109,11 @@ export const readProfile = async (req: Request, res: Response) => {
       with: { threads: true },
     });
     if (!foundUser) {
-      return res.status(404).json({ message: "User not found." });
+      return res.status(404).json({ message: "😖 User not found." });
     }
 
     return res.status(200).json({
-      message: `${foundUser.username}'s Profile`,
+      message: `😎 ${foundUser.username}'s Profile`,
       data: foundUser,
     });
   } catch (error) {
@@ -138,8 +138,8 @@ export const updateProfile = async (req: Request, res: Response) => {
   });
 
   if (!foundUser) {
-    return res.status(400).json({
-      message: "An account with this username does not exist.",
+    return res.status(404).json({
+      message: "😖 An account with this username does not exist.",
     });
   }
   const fileUrl = file && (await getFileUrl(file, "image"));
@@ -157,7 +157,7 @@ export const updateProfile = async (req: Request, res: Response) => {
   req.session.user = updatedUser;
   return res
     .status(200)
-    .json({ message: `user(${userId})'s profile modified.` });
+    .json({ message: `😎 user(${userId})'s profile modified.` });
 };
 
 export const changePassword = async (req: Request, res: Response) => {
@@ -172,8 +172,8 @@ export const changePassword = async (req: Request, res: Response) => {
   });
 
   if (!foundUser) {
-    return res.status(400).json({
-      message: "An account with this username does not exist.",
+    return res.status(404).json({
+      message: "😖 An account with this username does not exist.",
     });
   }
 
@@ -198,5 +198,5 @@ export const changePassword = async (req: Request, res: Response) => {
 
   return res
     .status(200)
-    .json({ message: `user(${userId})'s password changed.` });
+    .json({ message: `😎 user(${userId})'s password changed.` });
 };

@@ -134,7 +134,7 @@ threadRouter.put(
  *          pattern: '^[0-9]*$'
  *        description: 삭제할 게시글의 ID
  *    responses:
- *      '200':
+ *      '204':
  *        description: 게시글이 성공적으로 삭제됨.
  *      '401':
  *        description: 인증되지 않은 사용자.

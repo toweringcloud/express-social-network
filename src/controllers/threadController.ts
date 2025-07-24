@@ -26,7 +26,7 @@ export const listThread = async (req: Request, res: Response) => {
     // });
 
     return res.status(200).json({
-      message: `${allThreads.length} threads found.`,
+      message: `😎 ${allThreads.length} threads found.`,
       data: allThreads,
     });
   } catch (error) {
@@ -39,7 +39,7 @@ export const listThread = async (req: Request, res: Response) => {
 export const searchThread = async (req: Request, res: Response) => {
   const keyword = req.query.keyword as string;
   if (!keyword) {
-    return res.status(400).json({ message: "Keyword not found." });
+    return res.status(400).json({ message: "😖 Keyword not found." });
   }
 
   try {
@@ -62,7 +62,7 @@ export const searchThread = async (req: Request, res: Response) => {
     // });
 
     return res.status(200).json({
-      message: `${foundThreads.length} threads matched.`,
+      message: `😎 ${foundThreads.length} threads matched.`,
       data: foundThreads,
     });
   } catch (error) {
@@ -81,12 +81,12 @@ export const readThread = async (req: Request, res: Response) => {
     with: { user: true },
   });
   if (!foundThread) {
-    return res.status(404).json({ message: `Thread(${id}) not found.` });
+    return res.status(404).json({ message: `😖 Thread(${id}) not found.` });
   }
 
   return res
     .status(200)
-    .json({ message: `Thread(${id}) found.`, data: foundThread });
+    .json({ message: `😎 Thread(${id}) found.`, data: foundThread });
 };
 
 // mutations (create, update, delete)
@@ -98,7 +98,7 @@ export const createThread = async (req: Request, res: Response) => {
   } = req;
 
   if (!content) {
-    return res.status(400).json({ message: `Content are required.` });
+    return res.status(400).json({ message: `😖 Content are required.` });
   }
 
   // add photo file into storage
@@ -117,7 +117,7 @@ export const createThread = async (req: Request, res: Response) => {
 
     return res
       .status(201)
-      .json({ message: `new thread(${newThread.id} added.` });
+      .json({ message: `😎 new thread(${newThread.id}) added.` });
   } catch (error: unknown) {
     console.error("Error adding thread:", error);
     let errorMessage: string = "Unknown Error";
@@ -154,7 +154,9 @@ export const updateThread = async (req: Request, res: Response) => {
   });
 
   if (!foundThread) {
-    return res.status(404).json({ message: `thread(${threadId}) not found.` });
+    return res
+      .status(404)
+      .json({ message: `😖 thread(${threadId}) not found.` });
   }
   if (String(foundThread.userId) !== String(user.id)) {
     return res.status(403).redirect("/");
@@ -172,7 +174,9 @@ export const updateThread = async (req: Request, res: Response) => {
     })
     .where(eq(threads.id, threadId));
 
-  return res.status(200).json({ message: `new thread(${threadId}) modified.` });
+  return res
+    .status(200)
+    .json({ message: `😎 new thread(${threadId}) modified.` });
 };
 
 export const deleteThread = async (req: Request, res: Response) => {
@@ -185,7 +189,9 @@ export const deleteThread = async (req: Request, res: Response) => {
   });
 
   if (!foundThread) {
-    return res.status(404).json({ message: `thread(${threadId}) not found.` });
+    return res
+      .status(404)
+      .json({ message: `😖 thread(${threadId}) not found.` });
   }
   if (String(foundThread.userId) !== String(user.id)) {
     return res.status(403).redirect("/");
