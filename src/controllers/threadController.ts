@@ -8,22 +8,24 @@ import { getFileUrl, removeFile } from "../utils/storage";
 // queries (read-list/search/watch)
 export const listThread = async (req: Request, res: Response) => {
   try {
-    const allThreads = await db
-      .select()
-      .from(threads)
-      .orderBy(desc(threads.createdAt));
+    // basic case
+    // const allThreads = await db
+    //   .select()
+    //   .from(threads)
+    //   .orderBy(desc(threads.createdAt));
 
     // optional case
-    // const allThreads = await db.query.Thread.findMany({
-    //   orderBy: [desc(Thread.createdAt)], // orderBy는 배열로 여러 조건을 받을 수 있습니다.
-    //   with: {
-    //     owner: {
-    //       columns: {
-    //         username: true,
-    //       },
-    //     },
-    //   },
-    // });
+    const allThreads = await db.query.threads.findMany({
+      orderBy: [desc(threads.createdAt)],
+      with: {
+        user: {
+          columns: {
+            username: true,
+            avatarUrl: true,
+          },
+        },
+      },
+    });
 
     return res.status(200).json({
       message: `😎 ${allThreads.length} threads found.`,
@@ -43,23 +45,24 @@ export const searchThread = async (req: Request, res: Response) => {
   }
 
   try {
-    const foundThreads = await db
-      .select()
-      .from(threads)
-      .where(ilike(threads.content, `%${keyword}%`));
+    // basic case
+    // const foundThreads = await db
+    //   .select()
+    //   .from(threads)
+    //   .where(ilike(threads.content, `%${keyword}%`));
 
     // optional case
-    // foundThreads = await db.query.threads.findMany({
-    //   where: ilike(threads.content, `%${keyword}%`),
-    //   with: {
-    //     owner: {
-    //       columns: {
-    //         username: true,
-    //         avatarUrl: true,
-    //       },
-    //     },
-    //   },
-    // });
+    const foundThreads = await db.query.threads.findMany({
+      where: ilike(threads.content, `%${keyword}%`),
+      with: {
+        user: {
+          columns: {
+            username: true,
+            avatarUrl: true,
+          },
+        },
+      },
+    });
 
     return res.status(200).json({
       message: `😎 ${foundThreads.length} threads matched.`,

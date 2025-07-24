@@ -53,7 +53,9 @@ export const githubCallback = async (req: Request, res: Response) => {
     );
 
     if (!emailObj) {
-      return res.redirect("/login");
+      return res.status(400).json({
+        message: "😖 your github's email not available.",
+      });
     }
 
     const user = await db
@@ -75,6 +77,8 @@ export const githubCallback = async (req: Request, res: Response) => {
     req.session.user = user;
     return res.redirect("/");
   } else {
-    return res.redirect("/login");
+    return res.status(400).json({
+      message: "😖 your github's token not valid.",
+    });
   }
 };
